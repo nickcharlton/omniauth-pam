@@ -1,7 +1,6 @@
-require "omniauth-pam/version"
+# depends upon rpam
+require "rpam"
 
-module Omniauth
-  module Pam
-    # Your code goes here...
-  end
-end
+# then the rest of the strategy
+require "omniauth-pam/version"
+require "omniauth/pam"
