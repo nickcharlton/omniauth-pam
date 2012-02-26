@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency "omniauth", '~> 1.0'
-  s.add_runtime_dependency "rpam-ruby19"
+  s.add_runtime_dependency "rpam-ruby19", '~> 1.2.1'
 end
