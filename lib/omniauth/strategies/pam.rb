@@ -29,6 +29,13 @@ module OmniAuth
         super
       end
 
+      def full_name
+        begin
+          return Etc.getpwnam(uid).gecos.split(",")[0]
+        rescue
+        end
+      end
+
       uid do
         request['username']
       end
@@ -36,7 +43,7 @@ module OmniAuth
       info do
         info = {
           'nickname' => uid,
-          'name' => uid
+          'name' => (full_name || uid)
         }
         if options['domain']
           info['email'] = "#{uid}@#{options['domain']}"
