@@ -17,16 +17,43 @@ module OmniAuth
       end
 
       def callback_phase
-        unless Rpam.auth(request['username'], request['password'])
+        rpam_opts = Hash.new
+        if options['service']
+            rpam_opts['service'] = options['service']
+        end
+
+        unless Rpam.auth(request['username'], request['password'], rpam_opts)
           return fail!(:invalid_credentials)
         end
 
         super
       end
 
+      def full_name
+        begin
+          return Etc.getpwnam(uid).gecos.split(",")[0]
+        rescue
+        end
+      end
+
       uid do
         request['username']
       end
+
+      info do
+        info = {
+          'nickname' => uid,
+          'name' => (full_name || uid)
+        }
+        if options['domain']
+          info['email'] = "#{uid}@#{options['domain']}"
+        end
+
+        info
+      end
+
     end
   end
 end
+
+OmniAuth.config.add_camelization 'pam', 'PAM'
