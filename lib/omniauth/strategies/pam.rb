@@ -17,7 +17,10 @@ module OmniAuth
       end
 
       def callback_phase
-        unless Rpam.auth(request['username'], request['password'])
+        rpam_opts = Hash.new
+        rpam_opts['service'] = options['service'] unless options['service'].nil?
+
+        unless Rpam.auth(request['username'], request['password'], rpam_opts)
           return fail!(:invalid_credentials)
         end
 
@@ -27,6 +30,15 @@ module OmniAuth
       uid do
         request['username']
       end
+
+      info do
+        {
+          :nickname => uid,
+          :name => uid
+        }
+      end
     end
   end
 end
+
+OmniAuth.config.add_camelization 'pam', 'PAM'
