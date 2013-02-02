@@ -6,6 +6,9 @@ module OmniAuth
       option :fields, [:username]
       option :uid_field, :username
 
+      # this map is used to return gecos in info
+      option :gecos_map, [:name, :location, :phone, :home_phone, :description]
+
       def request_phase
         OmniAuth::Form.build(
           :title => (options[:title] || "Authenticate"), 
@@ -27,6 +30,16 @@ module OmniAuth
         super
       end
 
+      def parse_gecos
+        if options[:gecos_map].kind_of?(Array)
+          begin
+            gecos = Etc.getpwnam(uid).gecos.split(',')
+            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? }
+          rescue
+          end
+        end
+      end
+
       uid do
         request['username']
       end
@@ -35,7 +48,7 @@ module OmniAuth
         {
           :nickname => uid,
           :name => uid
-        }
+        }.merge!(parse_gecos)
       end
     end
   end
