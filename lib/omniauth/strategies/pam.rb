@@ -6,6 +6,9 @@ module OmniAuth
       option :fields, [:username]
       option :uid_field, :username
 
+      # this map is used to return gecos in info
+      option :gecos_map, [:name, :location, :phone, :home_phone, :description]
+
       def request_phase
         OmniAuth::Form.build(
           :title => (options[:title] || "Authenticate"), 
@@ -17,16 +20,38 @@ module OmniAuth
       end
 
       def callback_phase
-        unless Rpam.auth(request['username'], request['password'])
+        rpam_opts = Hash.new
+        rpam_opts['service'] = options['service'] unless options['service'].nil?
+
+        unless Rpam.auth(request['username'], request['password'], rpam_opts)
           return fail!(:invalid_credentials)
         end
 
         super
       end
 
+      def parse_gecos
+        if options[:gecos_map].kind_of?(Array)
+          begin
+            gecos = Etc.getpwnam(uid).gecos.split(',')
+            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? }
+          rescue
+          end
+        end
+      end
+
       uid do
         request['username']
+      end
+
+      info do
+        {
+          :nickname => uid,
+          :name => uid
+        }.merge!(parse_gecos)
       end
     end
   end
 end
+
+OmniAuth.config.add_camelization 'pam', 'PAM'
