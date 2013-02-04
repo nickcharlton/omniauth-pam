@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "omniauth", '~> 1.0'
   s.add_runtime_dependency "rpam-ruby19", '~> 1.2.1'
+  s.add_runtime_dependency "etc"
 end
