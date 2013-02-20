@@ -21,7 +21,7 @@ module OmniAuth
 
       def callback_phase
         rpam_opts = Hash.new
-        rpam_opts['service'] = options['service'] unless options['service'].nil?
+        rpam_opts[:service] = options[:service] unless options[:service].nil?
 
         unless Rpam.auth(request['username'], request['password'], rpam_opts)
           return fail!(:invalid_credentials)
