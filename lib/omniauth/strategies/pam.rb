@@ -48,7 +48,8 @@ module OmniAuth
       info do
         {
           :nickname => uid,
-          :name => uid
+          :name => uid,
+          :email => "#{uid}@uno.edu"
         }.merge!(parse_gecos)
       end
     end
