@@ -55,4 +55,4 @@ module OmniAuth
   end
 end
 
-#OmniAuth.confiig.add_camelization 'pam', 'PAM'
+OmniAuth.config.add_camelization 'pam', 'PAM'
