@@ -3,6 +3,7 @@ module OmniAuth
     class PAM
       include OmniAuth::Strategy
 
+      option :name, 'pam'
       option :fields, [:username]
       option :uid_field, :username
 
@@ -54,4 +55,4 @@ module OmniAuth
   end
 end
 
-OmniAuth.config.add_camelization 'pam', 'PAM'
+#OmniAuth.confiig.add_camelization 'pam', 'PAM'
