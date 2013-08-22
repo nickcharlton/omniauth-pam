@@ -49,7 +49,7 @@ module OmniAuth
         if options[:gecos_map].kind_of?(Array)
           begin
             gecos = Etc.getpwnam(uid).gecos.split(',')
-            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? }
+            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? || v.empty? }
           rescue
           end
         end
