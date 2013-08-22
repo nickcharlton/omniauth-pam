@@ -31,16 +31,6 @@ module OmniAuth
         super
       end
 
-      def parse_gecos
-        if options[:gecos_map].kind_of?(Array)
-          begin
-            gecos = Etc.getpwnam(uid).gecos.split(',')
-            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? }
-          rescue
-          end
-        end
-      end
-
       uid do
         request['username']
       end
@@ -51,6 +41,18 @@ module OmniAuth
           :name => uid,
           :email => "#{uid}#{ options.has_key?(:email) ? options[:email] : ''}"
         }.merge!(parse_gecos || {})
+      end
+
+      private
+
+      def parse_gecos
+        if options[:gecos_map].kind_of?(Array)
+          begin
+            gecos = Etc.getpwnam(uid).gecos.split(',')
+            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? }
+          rescue
+          end
+        end
       end
     end
   end
