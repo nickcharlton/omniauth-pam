@@ -49,7 +49,7 @@ module OmniAuth
         {
           :nickname => uid,
           :name => uid,
-          :email => "#{uid}#{ options[:email].present? ? options[:email] : ''}"
+          :email => "#{uid}#{ options.has_key?(:email) ? options[:email] : ''}"
         }.merge!(parse_gecos)
       end
     end
