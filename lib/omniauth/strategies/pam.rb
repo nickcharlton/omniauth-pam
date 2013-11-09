@@ -3,6 +3,7 @@ module OmniAuth
     class PAM
       include OmniAuth::Strategy
 
+      option :name, 'pam'
       option :fields, [:username]
       option :uid_field, :username
 
@@ -47,7 +48,8 @@ module OmniAuth
       info do
         {
           :nickname => uid,
-          :name => uid
+          :name => uid,
+          :email => "#{uid}#{ options[:email].present? ? options[:email] : ''}"
         }.merge!(parse_gecos)
       end
     end
