@@ -25,6 +25,7 @@ class App < Sinatra::Base
     <ul>
       <li>name: #{auth.info[:name]}</li>
       <li>nickname: #{auth.info[:nickname]}</li>
+      <li>email: #{auth.info[:email]}</li>
       <li>uid: #{auth[:uid]}</li>
     </ul>
     HTML
