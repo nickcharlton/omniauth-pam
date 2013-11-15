@@ -8,14 +8,15 @@ Gem::Specification.new do |s|
   s.email       = ['hello@nickcharlton.net']
   s.homepage    = 'https://github.com/nickcharlton/omniauth-pam'
   s.license     = 'MIT'
-  s.summary     = %q{A PAM strategy for OmniAuth.}
-  s.description = %q{A PAM strategy for OmniAuth.}
+  s.summary     = 'A PAM strategy for OmniAuth.'
+  s.description = 'An OmniAuth strategy to allow you to authenticate '\
+                  'against Pluggable Authentication Modules (PAM).'
 
   s.rubyforge_project = 'omniauth-pam'
 
-  s.files         = `git ls-files`.split('\n')
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
-  s.executables   = `git ls-files -- bin/*`.split('\n').map{ |f| File.basename(f) }
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
 
   s.add_runtime_dependency 'omniauth', '~> 1.0'
