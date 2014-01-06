@@ -20,3 +20,4 @@ Preferably from within the Vagrantfile included in the root of the repository.
 3. Enter a system user account (for example: vagrant/vagrant).
 4. Then, you'll be redirected to another page listing the auth hash details.
 
+[Sinatra]: http://www.sinatrarb.com
