@@ -39,6 +39,7 @@ module OmniAuth
           rescue
           end
         end
+        {} # make sure we return something mergeable
       end
 
       uid do
