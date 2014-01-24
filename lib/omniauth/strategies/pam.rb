@@ -39,7 +39,6 @@ module OmniAuth
           rescue
           end
         end
-        {} # make sure we return something mergeable
       end
 
       uid do
@@ -51,7 +50,7 @@ module OmniAuth
           :nickname => uid,
           :name => uid,
           :email => "#{uid}#{ options.has_key?(:email) ? options[:email] : ''}"
-        }.merge!(parse_gecos)
+        }.merge!(parse_gecos || {})
       end
     end
   end
