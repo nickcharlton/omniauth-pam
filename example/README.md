@@ -6,9 +6,9 @@ primitive [Sinatra][] application.
 You can start it by doing:
 
 ```bash
-[sudo] gem install bundler foreman
-bundle install
-foreman start
+sudo apt-get install bundler # or: sudo gem install bundler
+bundle install --path vendor/bundle
+bundle exec rackup
 ```
 
 Preferably from within the Vagrantfile included in the root of the repository.
