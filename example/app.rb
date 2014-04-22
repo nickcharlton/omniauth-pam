@@ -1,6 +1,6 @@
 class App < Sinatra::Base
   use Rack::Session::Cookie
-  use OmniAuth::Strategies::PAM
+  use OmniAuth::Strategies::PAM, email_domain: "localhost.localdomain"
 
   helpers do
     def ensure_auth

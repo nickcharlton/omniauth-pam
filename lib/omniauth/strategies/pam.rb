@@ -9,6 +9,8 @@ module OmniAuth
 
       # this map is used to return gecos in info
       option :gecos_map, [:name, :location, :phone, :home_phone, :description]
+      # option :email_domain - if defined, info.email is build using uid@email_domain if not found from gecos
+      # option :service - pam service name passed to rpam (/etc/pam.d/service_name), if not given rpam uses 'rpam'
 
       def request_phase
         OmniAuth::Form.build(
@@ -31,27 +33,26 @@ module OmniAuth
         super
       end
 
-      def parse_gecos
-        if options[:gecos_map].kind_of?(Array)
-          begin
-            gecos = Etc.getpwnam(uid).gecos.split(',')
-            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? }
-          rescue
-          end
-        end
-        {} # make sure we return something mergeable
-      end
-
       uid do
         request['username']
       end
 
       info do
-        {
-          :nickname => uid,
-          :name => uid,
-          :email => "#{uid}#{ options.has_key?(:email) ? options[:email] : ''}"
-        }.merge!(parse_gecos)
+        info = { :nickname => uid, :name => uid }
+        info[:email] = "#{uid}@#{options[:email_domain]}" if options.has_key?(:email_domain)
+        info.merge!(parse_gecos || {})
+      end
+
+      private
+
+      def parse_gecos
+        if options[:gecos_map].kind_of?(Array)
+          begin
+            gecos = Etc.getpwnam(uid).gecos.split(',')
+            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? || v.empty? }
+          rescue
+          end
+        end
       end
     end
   end
