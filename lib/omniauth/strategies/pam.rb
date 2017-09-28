@@ -6,15 +6,14 @@ module OmniAuth
       option :name, 'pam'
       option :fields, [:username]
       option :uid_field, :username
-
-      # this map is used to return gecos in info
-      option :gecos_map, [:name, :location, :phone, :home_phone, :description]
-      # option :email_domain - if defined, info.email is build using uid@email_domain if not found from gecos
-      # option :service - pam service name passed to rpam (/etc/pam.d/service_name), if not given rpam uses 'rpam'
+      # if provided, info.email is build using uid@email_domain if :email is not found in pam environment
+      option :email_domain, nil
+      # pam service name passed to rpam2 (/etc/pam.d/service_name), if not provided rpam2 uses 'rpam'
+      option :service, nil
 
       def request_phase
         OmniAuth::Form.build(
-          :title => (options[:title] || "Authenticate"), 
+          :title => (options[:title] || "Authenticate"),
           :url => callback_path
         ) do |field|
           field.text_field 'Username', 'username'
@@ -23,13 +22,7 @@ module OmniAuth
       end
 
       def callback_phase
-        rpam_opts = Hash.new
-        rpam_opts[:service] = options[:service] unless options[:service].nil?
-
-        unless Rpam.auth(request['username'], request['password'], rpam_opts)
-          return fail!(:invalid_credentials)
-        end
-
+        return fail!(:invalid_credentials) unless Rpam2.auth(options[:service], uid, request['password'])
         super
       end
 
@@ -38,21 +31,13 @@ module OmniAuth
       end
 
       info do
-        info = { :nickname => uid, :name => uid }
-        info[:email] = "#{uid}@#{options[:email_domain]}" if options.has_key?(:email_domain)
-        info.merge!(parse_gecos || {})
-      end
-
-      private
-
-      def parse_gecos
-        if options[:gecos_map].kind_of?(Array)
-          begin
-            gecos = Etc.getpwnam(uid).gecos.split(',')
-            Hash[options[:gecos_map].zip(gecos)].delete_if { |k, v| v.nil? || v.empty? }
-          rescue
-          end
-        end
+        info = { nickname: uid, name: uid }
+        # if authentication fails fall back to empty dictionary
+        info.merge!(Rpam2.listenv(options[:service], uid, request['password'], false) || {})
+        # info should contain now email if in pam environment and authentication successful
+        # fallback if email is not in listenv
+        info[:email] = "#{uid}@#{options[:email_domain]}" if info[:email].nil? && !options[:email_domain].nil?
+        info
       end
     end
   end
