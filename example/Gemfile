@@ -1,5 +1,5 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem 'sinatra', '~> 1.3.2', require: 'sinatra/base'
-gem 'omniauth', '~> 1.2.0'
-gem 'omniauth-pam', path: File.join(__FILE__, '../..')
+gem "omniauth", "~> 1.5"
+gem "omniauth-pam", path: File.join(__FILE__, "../..")
+gem "sinatra", "~> 2.0", require: "sinatra/base"
