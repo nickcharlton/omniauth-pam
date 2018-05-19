@@ -1,0 +1,8 @@
+---
+language: ruby
+rvm:
+  2.5.1
+addons:
+  apt:
+    packages:
+      - libpam0g-dev
