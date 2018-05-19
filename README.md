@@ -1,7 +1,7 @@
 # omniauth-pam
 
-An OmniAuth strategy to allow you to authentication against Pluggable Authentication
-Modules (PAM).
+An [OmniAuth][] strategy to allow you to authentication against
+[Pluggable Authentication Modules][pam] (PAM).
 
 ## Installation
 
@@ -13,33 +13,37 @@ gem install omniauth-pam
 
 ## Usage
 
-It has been tested under Ruby 1.9 and 2.0 on both Debian Wheezy (7.0) and Ubuntu
-Precise (12.04). [Ruby 1.8 can be made to work with small adjustments][oldruby].
-Under both Debian and Ubuntu you'll need the `libpam0g-dev` package to compile the
-`rpam` dependency.
+`libpam0g-dev` is needed to install on Debian and Ubuntu. An example
+`Vagrantfile` is provided to test this out.
 
-The included `Vagrantfile` provides a Debian Wheezy environment and the `example/`
-directory provides a working Sinatra example.
-
-### Simple Sinatra Example
-
-But, getting it working is as simple as this:
+### Sinatra Example
 
 ```ruby
-require 'omniauth'
-require 'omniauth-pam'
+require "omniauth"
+require "omniauth-pam"
 
-use Rack::Session::Cookie
+use Rack::Session::Cookie, secret: "a_random_hash"
 use OmniAuth::Strategies::PAM
 
-get '/auth/:provider/callback' do
-    puts request.env['omniauth.auth']
+get "/auth/:provider/callback" do
+  puts request.env['omniauth.auth']
 end
 ```
 
+See the [example/][] directory.
+
+## Contributing
+
+1. Fork it ( https://github.com/nickcharlton/omniauth-pam/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
+
 ## Author
 
-Copyright (c) 2013 Nick Charlton and contributors. MIT Licensed.
+Copyright (c) 2018 Nick Charlton. MIT Licensed.
 
-[oldruby]: http://nickcharlton.net/post/pam-for-omniauth
-
+[OmniAuth]: https://github.com/omniauth/omniauth
+[pam]: https://en.wikipedia.org/wiki/Pluggable_authentication_module<Paste>
+[example/]: /example
