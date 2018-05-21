@@ -80,9 +80,8 @@ describe OmniAuth::Strategies::PAM do
   end
 
   def expect_rpam_to_be_called(username:, password:, opts: {})
-    expect(Rpam2).to(
-        have_received(:auth).with(opts[:service], username, password),
-      )
+    expect(Rpam2).to \
+      have_received(:auth).with(opts[:service], username, password)
   end
 
 end
