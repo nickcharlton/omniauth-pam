@@ -6,15 +6,17 @@ module OmniAuth
       option :name, 'pam'
       option :fields, [:username]
       option :uid_field, :username
-      # if provided, info.email is build using uid@email_domain if :email is not found in pam environment
+      # if provided, info.email is build using uid@email_domain
+      # this is used if :email is not found in pam environment
       option :email_domain, nil
-      # pam service name passed to rpam2 (/etc/pam.d/service_name), if not provided rpam2 uses 'rpam'
+      # pam service name passed to rpam2 (/etc/pam.d/service_name)
+      # if not provided rpam2 uses 'rpam'
       option :service, nil
 
       def request_phase
         OmniAuth::Form.build(
-          :title => (options[:title] || "Authenticate"),
-          :url => callback_path
+          title: (options[:title] || "Authenticate"),
+          url: callback_path,
         ) do |field|
           field.text_field 'Username', 'username'
           field.password_field 'Password', 'password'
@@ -22,7 +24,9 @@ module OmniAuth
       end
 
       def callback_phase
-        return fail!(:invalid_credentials) unless Rpam2.auth(options[:service], uid, request['password'])
+        unless Rpam2.auth(options[:service], uid, request["password"])
+          return fail!(:invalid_credentials)
+        end
         super
       end
 
@@ -32,11 +36,15 @@ module OmniAuth
 
       info do
         info = { nickname: uid, name: uid }
+        rpam_env = Rpam2.listenv(options[:service], uid, request["password"])
         # if authentication fails fall back to empty dictionary
-        info.merge!(Rpam2.listenv(options[:service], uid, request['password'], false) || {})
-        # info should contain now email if in pam environment and authentication successful
+        info.merge!(rpam_env || {})
+        # info should contain now email if email in pam environment
+        #   and authentication successful
         # fallback if email is not in listenv
-        info[:email] = "#{uid}@#{options[:email_domain]}" if info[:email].nil? && !options[:email_domain].nil?
+        if info[:email].nil? && !options[:email_domain].nil?
+          info[:email] = "#{uid}@#{options[:email_domain]}"
+        end
         info
       end
     end

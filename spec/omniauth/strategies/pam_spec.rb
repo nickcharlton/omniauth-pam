@@ -1,19 +1,17 @@
 require "spec_helper"
 
-
-
 describe OmniAuth::Strategies::PAM do
   before(:all) do
     Rpam2.fake_data =
       {
-        usernames: Set['authur'],
-        servicenames: Set['rpam', nil],
-        password: 'a_password',
+        usernames: Set["authur"],
+        servicenames: Set["rpam", nil],
+        password: "a_password",
         env:
           {
-            email: 'me@example.com',
-            name: 'Authur Dent'
-          }
+            email: "me@example.com",
+            name: "Authur Dent",
+          },
       }
   end
 
@@ -82,7 +80,9 @@ describe OmniAuth::Strategies::PAM do
   end
 
   def expect_rpam_to_be_called(username:, password:, opts: {})
-    expect(Rpam2).to have_received(:auth).with(opts[:service], username, password)
+    expect(Rpam2).to(
+        have_received(:auth).with(opts[:service], username, password),
+      )
   end
 
 end
