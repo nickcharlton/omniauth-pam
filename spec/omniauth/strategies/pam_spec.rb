@@ -26,20 +26,17 @@ describe OmniAuth::Strategies::PAM do
   describe "#callback_phase" do
     context "with valid credentials" do
       it "populates the auth hash" do
-        mock_rpam(valid_credentials.merge(opts: {})).and_return(true)
 
         post "/auth/pam/callback", valid_credentials
 
         expect(auth_hash["provider"]).to eq("pam")
         expect(auth_hash["uid"]).to eq("authur")
         expect(auth_hash["info"]["name"]).to eq("Authur Dent")
-        expect_rpam_to_be_called(valid_credentials.merge(opts: {}))
       end
     end
 
     context "with invalid credentials" do
       it "redirects to /auth/failure" do
-        mock_rpam(invalid_credentials.merge(opts: {}))
 
         post "/auth/pam/callback", invalid_credentials
 
@@ -47,7 +44,6 @@ describe OmniAuth::Strategies::PAM do
         expect(last_response.headers["Location"]).to eq(
           "/auth/failure?message=invalid_credentials&strategy=pam",
         )
-        expect_rpam_to_be_called(invalid_credentials.merge(opts: {}))
       end
     end
   end
@@ -73,15 +69,6 @@ describe OmniAuth::Strategies::PAM do
 
   def invalid_credentials
     { username: "not_a_valid_user", password: "not_a_valid_password" }
-  end
-
-  def mock_rpam(username:, password:, opts:)
-    allow(Rpam2).to receive(:auth).with(opts[:service], username, password)
-  end
-
-  def expect_rpam_to_be_called(username:, password:, opts: {})
-    expect(Rpam2).to \
-      have_received(:auth).with(opts[:service], username, password)
   end
 
 end
