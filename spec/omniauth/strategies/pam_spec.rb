@@ -1,6 +1,20 @@
 require "spec_helper"
 
 describe OmniAuth::Strategies::PAM do
+  before(:all) do
+    Rpam2.fake_data =
+      {
+        usernames: Set["authur"],
+        servicenames: Set["rpam", nil],
+        password: "a_password",
+        env:
+          {
+            email: "me@example.com",
+            name: "Authur Dent",
+          },
+      }
+  end
+
   describe "#request_phase" do
     it "displays a form" do
       get "/auth/pam"
@@ -12,21 +26,17 @@ describe OmniAuth::Strategies::PAM do
   describe "#callback_phase" do
     context "with valid credentials" do
       it "populates the auth hash" do
-        mock_rpam(valid_credentials.merge(opts: {})).and_return(true)
-        mock_etc
 
         post "/auth/pam/callback", valid_credentials
 
         expect(auth_hash["provider"]).to eq("pam")
         expect(auth_hash["uid"]).to eq("authur")
         expect(auth_hash["info"]["name"]).to eq("Authur Dent")
-        expect_rpam_to_be_called(valid_credentials.merge(opts: {}))
       end
     end
 
     context "with invalid credentials" do
       it "redirects to /auth/failure" do
-        mock_rpam(invalid_credentials.merge(opts: {}))
 
         post "/auth/pam/callback", invalid_credentials
 
@@ -34,7 +44,6 @@ describe OmniAuth::Strategies::PAM do
         expect(last_response.headers["Location"]).to eq(
           "/auth/failure?message=invalid_credentials&strategy=pam",
         )
-        expect_rpam_to_be_called(invalid_credentials.merge(opts: {}))
       end
     end
   end
@@ -62,18 +71,4 @@ describe OmniAuth::Strategies::PAM do
     { username: "not_a_valid_user", password: "not_a_valid_password" }
   end
 
-  def mock_rpam(username:, password:, opts:)
-    allow(Rpam).to receive(:auth).with(username, password, opts)
-  end
-
-  def expect_rpam_to_be_called(username:, password:, opts: {})
-    expect(Rpam).to have_received(:auth).with(username, password, opts)
-  end
-
-  def mock_etc
-    etc_struct = Etc::Passwd.new
-    etc_struct.gecos = "Authur Dent,,"
-
-    expect(Etc).to receive(:getpwnam).with("authur").and_return(etc_struct)
-  end
 end

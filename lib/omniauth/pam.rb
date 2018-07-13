@@ -1,6 +1,5 @@
 require "omniauth"
-require "rpam"
-require "etc"
+require "rpam2"
 
 module OmniAuth
   module Strategies
