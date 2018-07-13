@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.0.0 (2018-07-13)
+
+* Switch to using `rpam2` ([9][])
+
+[9]: https://github.com/nickcharlton/omniauth-pam/pull/9
+
 ## 1.3.0 (2018-05-19)
 
 * Update the README.
